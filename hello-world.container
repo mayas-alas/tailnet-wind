@@ -1,0 +1,13 @@
+[Unit]
+Description=Hello World Quadlet Container
+After=network-online.target
+
+[Container]
+Image=docker.io/library/hello-world:latest
+# Optional: Add any specific execution commands
+# Exec=
+AutoUpdate=registry
+Network=host
+
+[Install]
+WantedBy=default.target
