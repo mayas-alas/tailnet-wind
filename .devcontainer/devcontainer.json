@@ -1,0 +1,22 @@
+{
+  "name": "Quadlet Dev Environment",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "runArgs": [
+    "--privileged",
+    "--cgroupns=host",
+    "-v", "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+  ],
+  "overrideCommand": false,
+  "postCreateCommand": "sudo systemctl enable --now tailscaled && sleep 3 && sudo tailscale up --authkey=$TAILSCALE_AUTH_KEY && sudo systemctl daemon-reload && sudo systemctl start hello-world.service",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode-remote.remote-containers",
+        "redhat.vscode-xml"
+      ]
+    }
+  }
+}
