@@ -1,21 +1,37 @@
 {
-  "name": "Quadlet Dev Environment",
+  "name": "Docker-in-Docker & Podlet Dev Env",
   "build": {
     "dockerfile": "../Dockerfile",
     "context": ".."
   },
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000",
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": true,
+      "moby": true
+    },
+    "ghcr.io/tailscale/codespace/tailscale:1": {}
+  },
   "runArgs": [
-    "--privileged",
-    "--cgroupns=host",
-    "-v", "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    "--privileged"
   ],
-  "overrideCommand": false,
-  "postCreateCommand": "sudo systemctl enable --now tailscaled && sleep 3 && sudo tailscale up --authkey=$TAILSCALE_AUTH_KEY && sudo systemctl daemon-reload && sudo systemctl start hello-world.service",
+  "postCreateCommand": "sleep 3 && sudo tailscale up --authkey=$TAILSCALE_AUTH_KEY",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-vscode-remote.remote-containers",
-        "redhat.vscode-xml"
+        "ms-azuretools.vscode-docker"
       ]
     }
   }
