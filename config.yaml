@@ -1,0 +1,33 @@
+# Example Quad-Ops config file
+
+# List of repositories you want to sync and deploy
+repositories:
+  - name: hello-world-project
+    url: "file:///workspace"  # Path to your project
+    sync:
+      # Sync configurations to Podman
+      - "hello-world.container"  # Quadlet file path within the repo
+
+# Podman and Quadlet configurations
+podman:
+  # Optionally configure Podman image storage and management options
+  storage:
+    driver: overlay
+    # Other podman storage configurations...
+
+# Configure the sync process (when using git repositories or file systems)
+sync:
+  # You can choose which files or directories to sync, default to syncing whole repo
+  paths:
+    - "/workspace"
+  postSync: true  # Run additional actions after syncing
+
+# Define additional optional settings for Quad-Ops
+systemd:
+  # If you want Quad-Ops to manage containers via systemd
+  units:
+    - hello-world  # Automatically create systemd unit for services
+  
+# Advanced Options for Deployment/Sync (optional)
+secrets: 
+  enabled: false  # Disable if you don't need secrets management
