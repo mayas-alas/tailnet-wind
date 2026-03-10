@@ -1,38 +1,25 @@
 {
-  "name": "Docker-in-Docker & Podlet Dev Env",
+  "name": "Tailnet Dev Env",
   "build": {
     "dockerfile": "../Dockerfile",
     "context": ".."
   },
   "remoteUser": "vscode",
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "installZsh": true,
-      "username": "vscode",
-      "userUid": "1000",
-      "userGid": "1000",
-      "upgradePackages": true
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "version": "latest",
-      "enableNonRootDocker": true,
-      "moby": true
-    },
     "ghcr.io/tailscale/codespace/tailscale:1": {}
   },
   "runArgs": [
-    "--privileged"
+    "--privileged",
+    "--tmpfs", "/run",
+    "--tmpfs", "/run/lock",
+    "-v", "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   ],
-  "postCreateCommand": "sudo tailscale up --authkey=$TAILSCALE_AUTH_KEY --hostname=gh-dev-tailnet" ,
+  "overrideCommand": false,
+  "forwardPorts": [8000, 8080],
+  "postCreateCommand": "sudo tailscale up --authkey=${TAILSCALE_AUTH_KEY} --hostname=gh-dev-tailnet --ssh && sudo loginctl enable-linger vscode && systemctl --user daemon-reload && systemctl --user enable --now openvscode todo-app",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-vscode-remote.remote-containers",
-        "ms-azuretools.vscode-docker"
-      ]
+      "extensions": ["tailscale.vscode-tailscale"]
     }
   }
 }
