@@ -1,0 +1,12 @@
+[Unit]
+Description=VS Code Web Server
+After=network.target
+
+[Service]
+Type=simple
+# Listens on port 8000, no password for dev ease (rely on Tailscale security)
+ExecStart=/usr/bin/code-server --bind-addr 0.0.0.0:8000 --auth none .
+Restart=always
+
+[Install]
+WantedBy=default.target
