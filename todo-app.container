@@ -1,0 +1,9 @@
+[Unit]
+Description=Hello Quadlet Business Service
+
+[Container]
+Image=docker.io/adferrand/todoapp:latest
+PublishPort=8080:8080
+
+[Install]
+WantedBy=default.target
