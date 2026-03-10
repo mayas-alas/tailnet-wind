@@ -1,17 +1,17 @@
-FROM node:lts AS base
-WORKDIR /app
+# Stage 1: Build podlet from source
+FROM rust:bookworm AS builder
+WORKDIR /build
 
-FROM base AS deps
-COPY package*.json ./
-RUN npm install
+# Install podlet (generates Quadlet files from Podman commands)
+RUN cargo install podlet
 
-FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
+# Stage 2: Runtime DevContainer
+FROM mcr.microsoft.com/devcontainers/base:bookworm
 
-FROM nginx:stable-alpine AS deploy
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+# Install Podman natively via apt (much faster and more stable than Homebrew on Linux)
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y podman \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8080
+# Copy the compiled podlet binary from the builder stage
+COPY --from=builder /usr/local/cargo/bin/podlet /usr/local/bin/podlet
